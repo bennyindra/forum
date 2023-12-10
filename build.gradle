@@ -1,0 +1,56 @@
+plugins {
+          id 'java'
+          id 'org.springframework.boot' version '3.1.6'
+          id 'io.spring.dependency-management' version '1.1.4'
+          id "com.diffplug.spotless" version '5.12.4' apply false
+}
+apply plugin: 'com.diffplug.spotless'
+spotless {
+          format 'misc', {
+                    target '**/*.gradle', '**/*.md', '**/.gitignore'
+                    trimTrailingWhitespace()
+                    indentWithSpaces(10)
+                    endWithNewline()
+          }
+          java {
+                    target '**/*.java'
+                    targetExclude "**/generated/**"
+//		            removeUnusedImports()
+                    eclipse().configFile 'config/eclipse-format-rules.xml'
+                    endWithNewline()
+                    custom 'noWildcardImports', {
+                              if (it.contains('*;\n')) {
+                                        throw new Error('No wildcard imports allowed')
+                              }
+                    }
+          }
+}
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+          sourceCompatibility = '17'
+}
+
+repositories {
+          mavenCentral()
+          maven {
+                    url = uri("https://plugins.gradle.org/m2/")
+          }
+}
+
+dependencies {
+          implementation 'org.springframework.boot:spring-boot-starter-web'
+          implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+          implementation 'org.liquibase:liquibase-core'
+          implementation 'org.mongodb:bson'
+          implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
+          compileOnly 'org.projectlombok:lombok'
+          runtimeOnly 'com.h2database:h2'
+          annotationProcessor 'org.projectlombok:lombok'
+          testImplementation 'org.springframework.boot:spring-boot-starter-test'
+          testImplementation 'io.projectreactor:reactor-test'
+}
+tasks.named('test') {
+          useJUnitPlatform()
+}
