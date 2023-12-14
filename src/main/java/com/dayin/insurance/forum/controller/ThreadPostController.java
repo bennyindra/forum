@@ -30,7 +30,7 @@ public class ThreadPostController {
 
     @GetMapping
     public ResponseEntity<Page<ThreadPost>> findAll(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String threadId) {
-        Pageable paging = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdTimestamp"));
+        Pageable paging = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "createdTimestamp"));
         return ResponseEntity.ok(threadPostService.findByThreadId(threadId, paging));
     }
 
